@@ -350,8 +350,9 @@ class _HomepageState extends State<Homepage> {
                       Get.to(() => PremiumTips());
                     } else {
                       print("Not bought");
+                      print(box.read("checker"));
 
-                      if (box.read("checker") == "PlayStore") {
+                      if (box.read("checker") == "source") {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {

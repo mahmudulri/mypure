@@ -136,6 +136,7 @@ class _InstallationSourcePageState extends State<InstallationSourcePage> {
   void initState() {
     super.initState();
     checkInstallationSource();
+    print(source);
     checkcrack();
   }
 
@@ -196,9 +197,9 @@ class _InstallationSourcePageState extends State<InstallationSourcePage> {
     if (source == "PlayStore") {
       print("No");
 
-      // box.write("checker", source);
+      box.write("checker", "source");
     } else {
-      // box.write("checker", "noData");
+      box.write("checker", "noData");
       print("ok");
     }
   }
