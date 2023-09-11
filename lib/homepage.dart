@@ -12,6 +12,7 @@ import 'package:zest_betting_tips/free_tips.dart';
 import 'package:zest_betting_tips/premium_tips.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:get_storage/get_storage.dart';
 
 class Homepage extends StatefulWidget {
   Homepage({
@@ -83,6 +84,8 @@ class _HomepageState extends State<Homepage> {
   var updtenotice;
   var isLoading = false.obs;
   var finalResult;
+
+  final box = GetStorage();
 
   fetchNotice() async {
     isLoading(true);
@@ -262,6 +265,9 @@ class _HomepageState extends State<Homepage> {
     final screenWidth = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
+        // floatingActionButton: FloatingActionButton(onPressed: () {
+        //   print(box.read("checker"));
+        // }),
         key: scaffoldKey,
         // drawer: Drawer(),
         appBar: AppBar(
@@ -344,84 +350,101 @@ class _HomepageState extends State<Homepage> {
                       Get.to(() => PremiumTips());
                     } else {
                       print("Not bought");
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              backgroundColor: Colors.transparent,
-                              child: Container(
-                                width: screenWidth,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white38,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: ListView.separated(
-                                    separatorBuilder: (context, index) {
-                                      return SizedBox(
-                                        height: 5,
-                                      );
-                                    },
-                                    shrinkWrap: true,
-                                    itemCount: _products.length,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 5,
-                                        ),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            iApEngine.handlePurchase(
-                                                _products[index], _productIds);
 
-                                            Navigator.pop(context);
-                                          },
-                                          child: Container(
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: Colors.black,
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                vertical: 5,
-                                                horizontal: 5,
+                      if (box.read("checker") == "PlayStore") {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                backgroundColor: Colors.transparent,
+                                child: Container(
+                                  width: screenWidth,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white38,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: ListView.separated(
+                                      separatorBuilder: (context, index) {
+                                        return SizedBox(
+                                          height: 5,
+                                        );
+                                      },
+                                      shrinkWrap: true,
+                                      itemCount: _products.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 5,
+                                          ),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              iApEngine.handlePurchase(
+                                                  _products[index],
+                                                  _productIds);
+
+                                              Navigator.pop(context);
+                                            },
+                                            child: Container(
+                                              height: 60,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                color: Colors.black,
                                               ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Text(
-                                                    _products[index]
-                                                        .description,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  vertical: 5,
+                                                  horizontal: 5,
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 10,
                                                     ),
-                                                  ),
-                                                ],
+                                                    Text(
+                                                      _products[index]
+                                                          .description,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ));
-                        },
-                      );
+                                ));
+                          },
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child: Container(
+                                  child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Error"),
+                              )),
+                            );
+                          },
+                        );
+                      }
                     }
                   },
                   child: ComboButton(),

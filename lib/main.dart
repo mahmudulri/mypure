@@ -1,38 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:store_checker/store_checker.dart';
 import 'package:zest_betting_tips/admin.dart';
-import 'package:zest_betting_tips/draft.dart';
 import 'package:zest_betting_tips/homepage.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:firedart/firedart.dart';
-import 'package:zest_betting_tips/splash_screen.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:zest_betting_tips/welcome.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:device_apps/device_apps.dart';
 
 const apiKey = "AIzaSyCnOv0A7yf3X1DThIYqF28ZOlkj13sJOzo";
 const projectID = "pure-cd74e";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  Future<String> getPackageName() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    return packageInfo.packageName;
-  }
-
-  // bool isInstalled =
-  //     await DeviceApps.isAppInstalled('com.android.packageinstaller');
-
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-  String appName = packageInfo.installerStore.toString();
-
-  print("my output " + appName);
-  // print(isInstalled);
+  await GetStorage.init();
 
   await Firebase.initializeApp(
       // options: FirebaseOptions(
@@ -46,19 +26,195 @@ void main() async {
       // ),
       );
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
-  // This widget is the root of your application.
+class _MyAppState extends State<MyApp> {
+  String source = "";
+
+  final box = GetStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    checkInstallationSource();
+    checkcrack();
+  }
+
+  Future<void> checkInstallationSource() async {
+    Source installationSource = await StoreChecker.getSource;
+    setState(() {
+      switch (installationSource) {
+        case Source.IS_INSTALLED_FROM_PLAY_STORE:
+          source = "PlayStore";
+          break;
+        case Source.IS_INSTALLED_FROM_PLAY_PACKAGE_INSTALLER:
+          source = "Google Package installer";
+          break;
+        case Source.IS_INSTALLED_FROM_LOCAL_SOURCE:
+          source = "LocalSource";
+          break;
+        case Source.IS_INSTALLED_FROM_AMAZON_APP_STORE:
+          source = "Amazon Store";
+          break;
+        case Source.IS_INSTALLED_FROM_HUAWEI_APP_GALLERY:
+          source = "Huawei App Gallery";
+          break;
+        case Source.IS_INSTALLED_FROM_SAMSUNG_GALAXY_STORE:
+          source = "Samsung Galaxy Store";
+          break;
+        case Source.IS_INSTALLED_FROM_SAMSUNG_SMART_SWITCH_MOBILE:
+          source = "Samsung Smart Switch Mobile";
+          break;
+        case Source.IS_INSTALLED_FROM_XIAOMI_GET_APPS:
+          source = "Xiaomi Get Apps";
+          break;
+        case Source.IS_INSTALLED_FROM_OPPO_APP_MARKET:
+          source = "Oppo App Market";
+          break;
+        case Source.IS_INSTALLED_FROM_VIVO_APP_STORE:
+          source = "Vivo App Store";
+          break;
+        case Source.IS_INSTALLED_FROM_RU_STORE:
+          source = "RuStore";
+          break;
+        case Source.IS_INSTALLED_FROM_OTHER_SOURCE:
+          source = "Other Source";
+          break;
+        case Source.IS_INSTALLED_FROM_APP_STORE:
+          source = "App Store";
+          break;
+        case Source.IS_INSTALLED_FROM_TEST_FLIGHT:
+          source = "Test Flight";
+          break;
+        case Source.UNKNOWN:
+          source = "Unknown Source";
+          break;
+      }
+    });
+  }
+
+  void checkcrack() async {
+    if (source == "PlayStore") {
+      // print("You are Real");
+
+      box.write("checker", source);
+    } else {
+      box.write("checker", "noData");
+      // print("You are Fake");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Pure Tips',
-      home: Homepage(),
+        debugShowCheckedModeBanner: false,
+        title: 'Installation Source Checker',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: Homepage());
+  }
+}
+
+class InstallationSourcePage extends StatefulWidget {
+  @override
+  _InstallationSourcePageState createState() => _InstallationSourcePageState();
+}
+
+class _InstallationSourcePageState extends State<InstallationSourcePage> {
+  String source = "";
+
+  final box = GetStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    checkInstallationSource();
+    checkcrack();
+  }
+
+  Future<void> checkInstallationSource() async {
+    Source installationSource = await StoreChecker.getSource;
+    setState(() {
+      switch (installationSource) {
+        case Source.IS_INSTALLED_FROM_PLAY_STORE:
+          source = "PlayStore";
+          break;
+        case Source.IS_INSTALLED_FROM_PLAY_PACKAGE_INSTALLER:
+          source = "Google Package installer";
+          break;
+        case Source.IS_INSTALLED_FROM_LOCAL_SOURCE:
+          source = "LocalSource";
+          break;
+        case Source.IS_INSTALLED_FROM_AMAZON_APP_STORE:
+          source = "Amazon Store";
+          break;
+        case Source.IS_INSTALLED_FROM_HUAWEI_APP_GALLERY:
+          source = "Huawei App Gallery";
+          break;
+        case Source.IS_INSTALLED_FROM_SAMSUNG_GALAXY_STORE:
+          source = "Samsung Galaxy Store";
+          break;
+        case Source.IS_INSTALLED_FROM_SAMSUNG_SMART_SWITCH_MOBILE:
+          source = "Samsung Smart Switch Mobile";
+          break;
+        case Source.IS_INSTALLED_FROM_XIAOMI_GET_APPS:
+          source = "Xiaomi Get Apps";
+          break;
+        case Source.IS_INSTALLED_FROM_OPPO_APP_MARKET:
+          source = "Oppo App Market";
+          break;
+        case Source.IS_INSTALLED_FROM_VIVO_APP_STORE:
+          source = "Vivo App Store";
+          break;
+        case Source.IS_INSTALLED_FROM_RU_STORE:
+          source = "RuStore";
+          break;
+        case Source.IS_INSTALLED_FROM_OTHER_SOURCE:
+          source = "Other Source";
+          break;
+        case Source.IS_INSTALLED_FROM_APP_STORE:
+          source = "App Store";
+          break;
+        case Source.IS_INSTALLED_FROM_TEST_FLIGHT:
+          source = "Test Flight";
+          break;
+        case Source.UNKNOWN:
+          source = "Unknown Source";
+          break;
+      }
+    });
+  }
+
+  void checkcrack() async {
+    if (source == "PlayStore") {
+      print("No");
+
+      // box.write("checker", source);
+    } else {
+      // box.write("checker", "noData");
+      print("ok");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Installation Source Checker'),
+      ),
+      body: Center(
+        child: Text(
+          'This app was installed from: $source',
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
     );
   }
 }
